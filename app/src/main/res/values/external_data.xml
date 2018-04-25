@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- External data files | 'ext' - prefix -->
+    <string name="ext_token_file">validation.val</string>
+</resources>

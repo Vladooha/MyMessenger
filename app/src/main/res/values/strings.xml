@@ -1,0 +1,85 @@
+<resources>
+    <!-- App info -->
+    <string name="app_name">MyMessanger</string>
+
+    <!-- Main\Reg Screen | Element's names -->
+    <string name="registration_alert">Creating a new account:</string>
+    <string name="login">E-mail:</string>
+    <string name="password">Password:</string>
+    <string name="nickname">Nickname:</string>
+    <string name="birthday">Enter your birthday (optional):</string>
+    <string name="log_in">Log in</string>
+    <string name="registration"><u>Click here to create an account</u></string>
+    <string name="sign_up">Sign up</string>
+    <string name="day">Day:</string>
+    <string name="day_short">DD:</string>
+    <string name="month">Month:</string>
+    <string name="month_short">MM:</string>
+    <string name="month_jan">Jan</string>
+    <string name="month_feb">Feb</string>
+    <string name="month_mar">Mar</string>
+    <string name="month_apr">Apr</string>
+    <string name="month_may">May</string>
+    <string name="month_jun">Jun</string>
+    <string name="month_jul">Jul</string>
+    <string name="month_aug">Aug</string>
+    <string name="month_sep">Sep</string>
+    <string name="month_oct">Oct</string>
+    <string name="month_nov">Nov</string>
+    <string name="month_dec">Dec</string>
+    <string-array name="monthlist">
+        <item>@string/not_filled</item>
+        <item>@string/month_jan</item>
+        <item>@string/month_feb</item>
+        <item>@string/month_mar</item>
+        <item>@string/month_apr</item>
+        <item>@string/month_may</item>
+        <item>@string/month_jun</item>
+        <item>@string/month_jul</item>
+        <item>@string/month_aug</item>
+        <item>@string/month_sep</item>
+        <item>@string/month_oct</item>
+        <item>@string/month_nov</item>
+        <item>@string/month_dec</item>
+    </string-array>
+    <string name="year">Year:</string>
+    <string name="year_short">YY:</string>
+    <string name="not_filled">-</string>
+
+    <!-- Main\Reg Screen | Event messages | 'ev' prefix -->
+    <string name="ev_no_login">Please, write real existing e-mail</string>
+    <string name="ev_no_password">
+        Password should be from 8 to 19 symbols length and contain only digits\letters\_\-
+    </string>
+    <string name="ev_no_nickname">
+        Nickname should be from 4 to 16 symbols length and contain only digits\letters\_\-\.
+    </string>
+    <string name="ev_bad_reg_login">Account with this e-mail already exists</string>
+    <string name="ev_bad_reg_nick">Account with this nickname already exists</string>
+    <string name="ev_no_connection">Unavailable connect to server =(</string>
+    <string name="ev_log_ex">User with this e-mail already signed up</string>
+    <string name="ev_bad_login">Incorrect login data</string>
+    <string name="ev_connecting">Connecting…</string>
+    <string name="ev_unknown_err">Unknown error =(((</string>
+
+    <!-- Dialogs | Element's names -->
+    <string name="title_messages">Dialogs:</string>
+    <string name="unknown_user"><b>*unknown user*</b></string>
+    <string name="no_message"></string>
+
+    <!-- User search | Element's names -->
+    <string name="title_user_search">User search:</string>
+    <string name="birth_form">Birthday:\u0020</string>
+    <string name="birth_absent">-</string>
+
+    <!-- Chat | Element's names -->
+    <string name="title_chat">Chat</string>
+
+    <!-- Left Menu | Element's names | 'menu' prefix -->
+    <string name="menu_search">User search</string>
+    <string name="menu_log_out">Log out</string>
+    <string name="menu_messages">Messages</string>
+    <string name="menu_dialogs_counter">Dialogs:\u0020</string>
+    <string name="menu_open">Open</string>
+    <string name="menu_close">Close</string>
+</resources>
