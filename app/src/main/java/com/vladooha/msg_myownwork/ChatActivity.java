@@ -42,7 +42,7 @@ public class ChatActivity extends AppCompatActivity {
     // TODO: It's mock!
     private ChatActivity.ChatAdapter setResListAdapter() {
        String[] searchResults = new String[2];
-        searchResults[0] = "0SAS";
+        searchResults[0] = "0SASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSASSAS";
         searchResults[1] = "1LOL";
         return new ChatActivity.ChatAdapter(searchResults);
     }
