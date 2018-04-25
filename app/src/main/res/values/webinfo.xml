@@ -1,6 +1,6 @@
 <resources>
     <!-- Web Server Info -->
-    <string name="ip">192.168.1.102</string>
+    <string name="ip">192.168.1.35</string>
     <integer name="port">5676</integer>
     <integer name="attempts">10</integer>
     <integer name="delay">400</integer>
