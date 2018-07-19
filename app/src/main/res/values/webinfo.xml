@@ -1,6 +1,6 @@
 <resources>
     <!-- Web Server Info -->
-    <string name="ip">192.168.1.35</string>
+    <string name="ip">192.168.1.104</string>
     <integer name="port">5676</integer>
     <integer name="attempts">10</integer>
     <integer name="delay">400</integer>
@@ -11,6 +11,8 @@
     <string name="cmd_login_by_token">logByToken</string>
     <string name="cmd_check">check</string>
     <string name="cmd_find">find</string>
+    <string name="cmd_start_dialogue">startDial</string>
+    <string name="cmd_send_message">sendMess</string>
 
     <!-- Web Server Keys | prefix 'key' -->
     <string name="key_email">-email\u0020</string>

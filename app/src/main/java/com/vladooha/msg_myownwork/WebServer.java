@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 
 public class WebServer {
-    final static String MyLogs = "myLogs";
+    final static String MyLogs = "MyLogs";
 
     static Resources res = null;
     static File filesDir = null;
@@ -125,9 +125,13 @@ public class WebServer {
         File tokenFile = new File(filesDir, res.getString(R.string.ext_token_file));
         try {
             if (tokenFile.exists()) {
-                tokenFile.delete();
+                Log.d(MyLogs, "Token file exists");
+                if (tokenFile.delete()) {
+                    Log.d(MyLogs, "Old token file deleted");
+                }
                 tokenFile = new File(filesDir, res.getString(R.string.ext_token_file));
             }
+            Log.d(MyLogs, "New token file created");
             tokenFile.createNewFile();
             BufferedWriter tokenWriter = new BufferedWriter(new FileWriter(tokenFile));
             // ! This consequence uses in token-file reader !
@@ -135,17 +139,25 @@ public class WebServer {
             tokenWriter.write(token + "\r\n");
             tokenWriter.flush();
             tokenWriter.close();
+            Log.d(MyLogs, "Info writed to file");
             return true;
         } catch (IOException e) {
+            Log.d(MyLogs, "IOException");
             if (tokenFile.exists()) {
-                tokenFile.delete();
+                if (tokenFile.delete()) {
+                    Log.d(MyLogs, "Bad token file was deleted");
+                }
             }
             return false;
         }
     }
 
     @Nullable
-    public static Map<String, String> readTokenFile() {
+    public static Map<String, String> readTokenFile() throws NotBindedException {
+        if (res == null || filesDir == null) {
+            Log.d(MyLogs, "NotBindedException");
+            throw new NotBindedException();
+        }
         File tokenFile = new File(filesDir, res.getString(R.string.ext_token_file));
         if (tokenFile.exists()) {
             try {
@@ -154,11 +166,14 @@ public class WebServer {
                 // ! This consequence was made in token-file writer !
                 result.put(res.getString(R.string.key_email), tokenReader.nextLine());
                 result.put(res.getString(R.string.key_token), tokenReader.nextLine());
+                Log.d(MyLogs, "Token file was readed correctly");
                 return result;
             } catch (FileNotFoundException e) {
+                Log.d(MyLogs, "FileNotFoundException");
                 return null;
             }
         } else {
+            Log.d(MyLogs, "Token file isn't exists");
             return null;
         }
     }
@@ -166,25 +181,40 @@ public class WebServer {
     private static boolean newTokenChecker() {
         if (serverAnswer != null) {
             Pattern tokenPatt = Pattern.compile(res.getString(R.string.key_token)
-                    + res.getString(R.string.patt_token));
+                    + res.getString(R.string.patt_token) + ":");
             Matcher tokenMatcher = tokenPatt.matcher(serverAnswer);
             if (tokenMatcher.find()) {
                 String tokenStr = tokenMatcher.group(0)
-                        .substring(res.getString(R.string.key_token).length(),
-                        tokenMatcher.group(0).length() - 1);
-                Map<String, String> data = readTokenFile();
-                if (data != null) {
-                    String loginStr = data.get(res.getString(R.string.key_email));
-                    try {
-                        return makeTokenFile(loginStr, tokenStr);
-                    } catch (NotBindedException e) {
-                        e.printStackTrace();
+                        .substring(res.getString(R.string.key_token).length())
+                        .replace(":", "");;
+                Log.d(MyLogs, "Token was found in request: " + tokenStr);
+                try {
+                    Pattern loginPatt = Pattern.compile(res.getString(R.string.key_email)
+                            + res.getString(R.string.patt_email) + ":");
+                    Matcher loginMatcher = loginPatt.matcher(serverAnswer);
+                    if (loginMatcher.find()) {
+                        String loginStr = loginMatcher.group(0)
+                                .substring(res.getString(R.string.key_email).length())
+                                .replace(":", "");
+                        Log.d(MyLogs, "User was found in request: " + loginStr);
+                        Map<String, String> data = readTokenFile();
+                        if (data != null &&
+                                loginStr.equals(data.get(res.getString(R.string.key_email))) &&
+                                tokenStr.equals(data.get(res.getString(R.string.key_token)))) {
+                            Log.d(MyLogs, "File have the same data");
+                            return true;
+                        } else {
+                            return makeTokenFile(loginStr, tokenStr);
+                        }
+                    } else {
                         return false;
                     }
-                } else {
+                } catch (NotBindedException e) {
+                    e.printStackTrace();
                     return false;
                 }
             } else {
+                Log.d(MyLogs, "There is no new token");
                 return false;
             }
         } else {

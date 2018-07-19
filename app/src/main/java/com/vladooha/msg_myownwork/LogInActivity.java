@@ -100,27 +100,33 @@ public class LogInActivity extends AppCompatActivity {
         super.onResume();
 
         WebServer.setResources(res, getFilesDir());
-        Map<String, String> data = WebServer.readTokenFile();
-        if (data != null) {
-            try {
+        try {
+            Map<String, String> data = WebServer.readTokenFile();
+            if (data != null) {
                 strLogin = data.get(res.getString(R.string.key_email));
                 strToken = data.get(res.getString(R.string.key_token));
                 serverAnswer = WebServer.makeRequest(res.getString(R.string.cmd_login_by_token) + ":"
                         + res.getString(R.string.key_email) + strLogin + ":"
                         + res.getString(R.string.key_token) + strToken + ":");
-            } catch (NotBindedException e) {
-                e.printStackTrace();
+            } else {
+                Log.d(MyLogs, "User info file opening failed");
             }
+        } catch (NotBindedException e) {
+            Log.d(MyLogs, "NotBindedException");
+            e.printStackTrace();
+        }
 
-            if (serverAnswer != null && serverAnswer.startsWith(res.getString(R.string.key_token))) {
-                if (!serverAnswer.contains(strToken)) {
-                    try {
-                        WebServer.makeTokenFile(strLogin, strToken);
-                    } catch (NotBindedException e) {
-                    }
+        if (serverAnswer != null && serverAnswer.startsWith(res.getString(R.string.key_token))) {
+            if (!serverAnswer.contains(strToken)) {
+                try {
+                    WebServer.makeTokenFile(strLogin, strToken);
+                } catch (NotBindedException e) {
+                    Log.d(MyLogs, "NotBindedException");
+                    e.printStackTrace();
                 }
-                startMainMenuActivity();
             }
+            Log.d(MyLogs, "startMainMenuActivity()");
+            startMainMenuActivity();
         }
     }
 

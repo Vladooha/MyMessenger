@@ -1,123 +1,109 @@
 package com.vladooha.msg_myownwork;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.vladooha.msg_myownwork.WebServer.MyLogs;
 
 /**
  * Created by Vladooha on 29.03.2018.
  */
 
 public class UserObj {
-    String uid;
     String nick;
-    Calendar birth;
-    String lastMess;
+    DataContainer birth;
     Bitmap pic;
-
-    boolean nickReq;
-    boolean birthReq;
-    boolean lastMessReq;
-    boolean picReq;
 
     Resources res;
 
     public UserObj(Resources resCont) {
         res = resCont;
-        nickReq = birthReq = lastMessReq = picReq = false;
     }
 
-    private boolean setUserInfo(String userInfo) {
+    public void setAsUnknownUser() {
+        nick = "*UNKNOWN_USER*";
+        birth = new DataContainer();
+        pic = null;
+    }
+
+    public boolean setUserInfo(String userInfo) {
+        Log.d(MyLogs, "setUserInfo() got: " + userInfo);
+
         Matcher matchBuff;
 
-        Pattern pattUid = Pattern.compile(res.getString(R.string.key_uid) + res.getString(R.string.patt_uid) + ":");
-        matchBuff = pattUid.matcher(userInfo);
+        Pattern pattNick = Pattern.compile(res.getString(R.string.key_nick) + res.getString(R.string.patt_nick) + ":");
+        matchBuff = pattNick.matcher(userInfo);
         if (matchBuff.find()) {
-            uid = matchBuff.group()
-                    .replace(res.getString(R.string.key_uid), "")
+            nick = matchBuff.group()
+                    .replace(res.getString(R.string.key_nick), "")
                     .replace(":", "");
         } else {
-            uid = "0";
+            setAsUnknownUser();
             return false;
         }
 
-        if (nickReq) {
-            Pattern pattNick = Pattern.compile(res.getString(R.string.key_nick) + res.getString(R.string.patt_nick) + ":");
-            matchBuff = pattNick.matcher(userInfo);
-            if (matchBuff.find()) {
-                nick = matchBuff.group()
-                        .replace(res.getString(R.string.key_nick), "")
-                        .replace(":", "");
-            }
+
+        Pattern pattPic = Pattern.compile(res.getString(R.string.key_url) + res.getString(R.string.patt_url) + ":");
+        matchBuff = pattPic.matcher(userInfo);
+        if (matchBuff.find()) {
+            // TODO: Think about it
+            pic = getPicByUrl(userInfo
+                    .replace(res.getString(R.string.key_url), "")
+                    .replace(":", ""));
         }
 
-        if (picReq) {
-            Pattern pattPic = Pattern.compile(res.getString(R.string.key_url) + res.getString(R.string.patt_url) + ":");
-            matchBuff = pattPic.matcher(userInfo);
-            if (matchBuff.find()) {
-                // TODO think about it
-                pic = getPicByUrl(userInfo
-                        .replace(res.getString(R.string.key_url), "")
-                        .replace(":", ""));
-            }
+        int day = DataContainer.UNKNOWN_VALUE;
+        int month = DataContainer.UNKNOWN_VALUE;
+        int year = DataContainer.UNKNOWN_VALUE;
+        Pattern pattDay = Pattern.compile(res.getString(R.string.key_bday) + res.getString(R.string.patt_day) + ":");
+        matchBuff = pattDay.matcher(userInfo);
+        if (matchBuff.find()) {
+            day = Integer.parseInt(matchBuff.group()
+                    .replace(res.getString(R.string.key_bday), "")
+                    .replace(":", ""));
         }
-
-        if (birthReq) {
-            int day = -1;
-            int month = -1;
-            int year = -1;
-            Pattern pattDay = Pattern.compile(res.getString(R.string.key_bday) + res.getString(R.string.patt_day) + ":");
-            matchBuff = pattDay.matcher(userInfo);
-            if (matchBuff.find()) {
-                day = Integer.parseInt(matchBuff.group()
-                        .replace(res.getString(R.string.key_bday), "")
-                        .replace(":", ""));
-            }
-            // TODO ispravit' etu zalupu v budushem
-            Pattern pattMonth = Pattern.compile(res.getString(R.string.key_bmonth)
-                    + res.getString(R.string.month_jan) + "||"
-                    + res.getString(R.string.month_feb) + "||"
-                    + res.getString(R.string.month_mar) + "||"
-                    + res.getString(R.string.month_apr) + "||"
-                    + res.getString(R.string.month_may) + "||"
-                    + res.getString(R.string.month_jun) + "||"
-                    + res.getString(R.string.month_jul) + "||"
-                    + res.getString(R.string.month_aug) + "||"
-                    + res.getString(R.string.month_sep) + "||"
-                    + res.getString(R.string.month_oct) + "||"
-                    + res.getString(R.string.month_nov) + "||"
-                    + res.getString(R.string.month_dec) + ":");
-            matchBuff = pattMonth.matcher(userInfo);
-            if (matchBuff.find()) {
-                String monthStr = matchBuff.group()
-                        .replace(res.getString(R.string.key_bmonth), "")
-                        .replace(":", "");
-                String[] months = res.getStringArray(R.array.monthlist);
-                for (int i = 0; i < months.length; ++i) {
-                    if (monthStr.equals(months[i])) {
-                        month = i + 1;
-                    }
+        // TODO: Ispravit' etu zalupu v budushem
+        Pattern pattMonth = Pattern.compile(res.getString(R.string.key_bmonth)
+                + res.getString(R.string.month_jan) + "||"
+                + res.getString(R.string.month_feb) + "||"
+                + res.getString(R.string.month_mar) + "||"
+                + res.getString(R.string.month_apr) + "||"
+                + res.getString(R.string.month_may) + "||"
+                + res.getString(R.string.month_jun) + "||"
+                + res.getString(R.string.month_jul) + "||"
+                + res.getString(R.string.month_aug) + "||"
+                + res.getString(R.string.month_sep) + "||"
+                + res.getString(R.string.month_oct) + "||"
+                + res.getString(R.string.month_nov) + "||"
+                + res.getString(R.string.month_dec) + ":");
+        matchBuff = pattMonth.matcher(userInfo);
+        if (matchBuff.find()) {
+            String monthStr = matchBuff.group()
+                    .replace(res.getString(R.string.key_bmonth), "")
+                    .replace(":", "");
+            String[] months = res.getStringArray(R.array.monthlist);
+            for (int i = 0; i < months.length; ++i) {
+                if (monthStr.equals(months[i])) {
+                    month = i + 1;
                 }
             }
-
-            Pattern pattYear = Pattern.compile(res.getString(R.string.key_byear) + res.getString(R.string.patt_year) + ":");
-            matchBuff = pattYear.matcher(userInfo);
-            if (matchBuff.find()) {
-                year = Integer.parseInt(matchBuff.group()
-                        .replace(res.getString(R.string.key_byear), "")
-                        .replace(":", ""));
-            }
-
-            birth.set(day, month, year);
         }
+
+        Pattern pattYear = Pattern.compile(res.getString(R.string.key_byear) + res.getString(R.string.patt_year) + ":");
+        matchBuff = pattYear.matcher(userInfo);
+        if (matchBuff.find()) {
+            year = Integer.parseInt(matchBuff.group()
+                    .replace(res.getString(R.string.key_byear), "")
+                    .replace(":", ""));
+        }
+
+        birth = new DataContainer(day, month, year);
 
         return true;
     }
@@ -135,10 +121,6 @@ public class UserObj {
 //        }
 //    }
 
-    public String getUid() {
-        return uid;
-    }
-
     public String getNick() {
         return nick;
     }
@@ -151,12 +133,8 @@ public class UserObj {
         }
     }
 
-    public Calendar getBirth() {
+    public DataContainer getBirth() {
         return birth;
-    }
-
-    public boolean isLastMessReq() {
-        return lastMessReq;
     }
 
     // Helping methods

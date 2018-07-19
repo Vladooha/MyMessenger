@@ -111,7 +111,8 @@ public class MessagesFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ChatActivity.class);
-                    intent.putExtra(CONTAINER_UID, dialog.getUid());
+                    // TODO: It's mock
+                    intent.putExtra(CONTAINER_UID, "0");
                     startActivity(intent);
                 }
             });
