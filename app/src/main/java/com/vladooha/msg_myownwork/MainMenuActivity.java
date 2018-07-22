@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 public class MainMenuActivity extends AppCompatActivity {
     // Screen view-elements

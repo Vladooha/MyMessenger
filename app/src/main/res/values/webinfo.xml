@@ -1,6 +1,6 @@
 <resources>
     <!-- Web Server Info -->
-    <string name="ip">192.168.1.104</string>
+    <string name="ip">192.168.1.35</string>
     <integer name="port">5676</integer>
     <integer name="attempts">10</integer>
     <integer name="delay">400</integer>
@@ -11,6 +11,7 @@
     <string name="cmd_login_by_token">logByToken</string>
     <string name="cmd_check">check</string>
     <string name="cmd_find">find</string>
+    <string name="cmd_full_info">fullInfo</string>
     <string name="cmd_start_dialogue">startDial</string>
     <string name="cmd_send_message">sendMess</string>
 
@@ -22,6 +23,7 @@
     <string name="key_bmonth">-bMonth\u0020</string>
     <string name="key_byear">-bYear\u0020</string>
     <string name="key_uid">-uid\u0020</string>
+    <string name="key_dest_uid">-destUid\u0020</string>
     <string name="key_url">-url\u0020</string>
     <string name="key_token">-token\u0020</string>
 
@@ -34,8 +36,9 @@
     <string name="patt_email">[a-zA-Z0-9][a-zA-Z0-9_\\.-]{3,15}@[a-zA-Z0-9][a-zA-Z0-9_\\.-]{1,8}.[a-zA-Z0-9]{2,4}</string>
     <string name="patt_pass">[a-zA-Z0-9][a-zA-Z0-9_-]{7,18}</string>
     <string name="patt_nick">[a-zA-Z0-9][a-zA-Z0-9_\\.-]{3,15}</string>
-    <string name="patt_uid">[0-9]{3,35}</string>
+    <string name="patt_uid">[0-9]{3,95}</string>
     <string name="patt_day">[1-3]?[0-9]</string>
+    <string name="patt_month">[a-zA-Z]{3,3}</string>
     <string name="patt_year">[0-9]{4,4}</string>
     <string name="patt_token">[^:]*</string>
     <string name="patt_url">http[s]?:\\\\[a-zA-Z0-9-_\\\\.]{1,25}</string>

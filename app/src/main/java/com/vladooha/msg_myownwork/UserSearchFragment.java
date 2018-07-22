@@ -1,6 +1,7 @@
 package com.vladooha.msg_myownwork;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Map;
 
 /**
@@ -35,6 +35,10 @@ public class UserSearchFragment extends Fragment {
     // Resources cahce
     Resources res;
 
+    // Containers for intents
+    public static final String CONTAINER_UID = "com.vladooha.myMessenger.userSearchFragment.UID";
+
+    // Log constants
     private static final String MyLogs = "MyLogs";
 
     @Override
@@ -71,15 +75,12 @@ public class UserSearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 request = searcher.getQuery().toString();
                 userList.setLayoutManager(new LinearLayoutManager(getActivity()));
-                //userList.swapAdapter(setResListAdapter(), true);
                 userList.setAdapter(setResListAdapter());
-                Log.d(MyLogs, "onQueryTextSubmit()");
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(MyLogs, "onQueryTextChange()");
                 return false;
             }
         });
@@ -93,58 +94,37 @@ public class UserSearchFragment extends Fragment {
             Log.d(MyLogs, "User searcher got a request");
             WebServer webserver = new WebServer();
             webserver.setResources(res, getActivity().getFilesDir());
-            Map<String, String> userData = null;
+            String serverAnswer = null;
             try {
-                userData = webserver.readTokenFile();
+                serverAnswer = webserver.makeAuthRequest(res.getString(R.string.cmd_find),
+                        res.getString(R.string.key_nick) + request);
             } catch (NotBindedException e) {
-                Log.d(MyLogs, "Bad server's preset");
                 e.printStackTrace();
                 return new UserSearchResultAdapter(new UserObj[0]);
             }
 
-            if (userData != null) {
-                Log.d(MyLogs, "User info file opened");
-                String serverAnswer = null;
-                try {
-                    serverAnswer = WebServer.makeRequest(res.getString(R.string.cmd_find) + ":"
-                            + res.getString(R.string.key_email) + userData.get(getText(R.string.key_email)) + ":"
-                            + res.getString(R.string.key_token) + userData.get(getText(R.string.key_token)) + ":"
-                            + res.getString(R.string.key_nick) + request + ":");
-                    Log.d(MyLogs, "Request succefully sended");
-                } catch (NotBindedException e) {
-                    Log.d(MyLogs, "Bad server's preset");
-                    e.printStackTrace();
-                    return new UserSearchResultAdapter(new UserObj[0]);
+            if (serverAnswer != null && serverAnswer.startsWith(res.getString(R.string.key_nick)))
+            {
+                Log.d(MyLogs, "We got users info");
+                String[] searchResultUnform = serverAnswer.split(":");
+                ArrayList<UserObj> searchRes = new ArrayList<>();
+                for (int i = 0; i < searchResultUnform.length - 2; ++i) {
+                    UserObj userBuff = new UserObj(res);
+                    userBuff.setUserInfo(
+                            searchResultUnform[i].replace("|", ":") + ":");
+                    searchRes.add(userBuff);
                 }
-
-                if (serverAnswer != null && serverAnswer.startsWith(res.getString(R.string.key_nick)))
-                {
-                    Log.d(MyLogs, "We got users info");
-                    String[] searchResultUnform = serverAnswer.split(":");
-                    ArrayList<UserObj> searchRes = new ArrayList<>();
-                    for (int i = 0; i < searchResultUnform.length - 2; ++i) {
-                        UserObj userBuff = new UserObj(res);
-                        userBuff.setUserInfo(
-                                searchResultUnform[i].replace("|", ":") + ":");
-                        searchRes.add(userBuff);
-                    }
-                    UserObj[] searchResults = searchRes.toArray(new UserObj[searchRes.size()]);
-                    Log.d(MyLogs, String.valueOf(searchResults.length) + " user's found");
-                    for (UserObj user : searchResults) {
-                        Log.d(MyLogs, "User: " + user.getNick() + "|" + user.getBirth().getString());
-                    }
-                    for (String user : searchResultUnform) {
-                        Log.d(MyLogs, "User unform: " + user);
-                    }
-                    return new UserSearchFragment.UserSearchResultAdapter(searchResults);
-                } else {
-                    Log.d(MyLogs, "Bad server's answer");
-                    return new UserSearchFragment.UserSearchResultAdapter(new UserObj[0]);
+                UserObj[] searchResults = searchRes.toArray(new UserObj[searchRes.size()]);
+                Log.d(MyLogs, String.valueOf(searchResults.length) + " user's found");
+                for (UserObj user : searchResults) {
+                    Log.d(MyLogs, "User: " + user.getNick());
                 }
+                return new UserSearchFragment.UserSearchResultAdapter(searchResults);
             } else {
-                Log.d(MyLogs, "User info file opening failed");
+                Log.d(MyLogs, "Bad server's answer");
                 return new UserSearchFragment.UserSearchResultAdapter(new UserObj[0]);
             }
+
         } else {
             Log.d(MyLogs, "User searcher got bad request");
             return new UserSearchFragment.UserSearchResultAdapter(new UserObj[0]);
@@ -156,12 +136,26 @@ public class UserSearchFragment extends Fragment {
         // Screen view-elements
         private TextView nicknameText;
         private ImageView avatarPic;
+        private String id;
 
         public SearchResultHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.rec_list_users, parent, false));
 
             nicknameText = itemView.findViewById(R.id.list_user_search_nick);
             avatarPic = itemView.findViewById(R.id.list_user_search_avatar);
+            id = null;
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (id != null) {
+                        Intent intent = new Intent(getContext(), UserPageActivity.class);
+                        // TODO: It's mock
+                        intent.putExtra(CONTAINER_UID, id);
+                        startActivity(intent);
+                    }
+                }
+            });
         }
 
         public void bind(UserObj searchResult) {
@@ -174,6 +168,8 @@ public class UserSearchFragment extends Fragment {
             if (avatarPicBuff != null) {
                 avatarPic.setImageBitmap(avatarPicBuff);
             }
+
+            id = searchResult.getId();
         }
     }
 

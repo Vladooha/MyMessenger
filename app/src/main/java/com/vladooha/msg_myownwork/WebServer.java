@@ -108,6 +108,36 @@ public class WebServer {
         return serverAnswer;
     }
 
+    public static String makeAuthRequest(final String key, final String data) throws NotBindedException {
+        Map<String, String> userData = null;
+        try {
+            userData = readTokenFile();
+        } catch (NotBindedException e) {
+            Log.d(MyLogs, "Bad server's preset");
+            e.printStackTrace();
+            return null;
+        }
+
+        if (userData != null) {
+            Log.d(MyLogs, "User info file opened");
+            try {
+                String serverAnswer = WebServer.makeRequest(key + ":"
+                        + res.getString(R.string.key_email) + userData.get(res.getText(R.string.key_email)) + ":"
+                        + res.getString(R.string.key_token) + userData.get(res.getText(R.string.key_token)) + ":"
+                        + data + ":");
+                Log.d(MyLogs, "Request succefully sended");
+                return serverAnswer;
+            } catch (NotBindedException e) {
+                Log.d(MyLogs, "Bad server's preset");
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            Log.d(MyLogs, "User info file opening failed");
+            return null;
+        }
+    }
+
     public static boolean getServerStatus() {
         String answer = null;
         try {

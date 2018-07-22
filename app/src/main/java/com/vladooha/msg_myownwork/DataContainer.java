@@ -64,9 +64,9 @@ public class DataContainer {
         StringBuilder result = new StringBuilder();
         result.append(day > UNKNOWN_VALUE ? String.valueOf(day) : "-");
         result.append(".");
-        result.append(month > UNKNOWN_VALUE ? String.valueOf(day) : "-");
+        result.append(month > UNKNOWN_VALUE ? String.valueOf(month) : "-");
         result.append(".");
-        result.append(day > UNKNOWN_VALUE ? String.valueOf(day) : "-");
+        result.append(year > UNKNOWN_VALUE ? String.valueOf(year) : "-");
         return result.toString();
     }
 

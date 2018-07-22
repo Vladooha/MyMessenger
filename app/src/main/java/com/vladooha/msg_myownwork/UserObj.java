@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,8 +15,9 @@ import static com.vladooha.msg_myownwork.WebServer.MyLogs;
  */
 
 public class UserObj {
+
     String nick;
-    DataContainer birth;
+    String id;
     Bitmap pic;
 
     Resources res;
@@ -28,7 +28,6 @@ public class UserObj {
 
     public void setAsUnknownUser() {
         nick = "*UNKNOWN_USER*";
-        birth = new DataContainer();
         pic = null;
     }
 
@@ -44,8 +43,19 @@ public class UserObj {
                     .replace(res.getString(R.string.key_nick), "")
                     .replace(":", "");
         } else {
+            Log.d(MyLogs, "There is no nick!");
             setAsUnknownUser();
             return false;
+        }
+
+        Pattern pattId = Pattern.compile(res.getString(R.string.key_uid) + res.getString(R.string.patt_uid) + ":");
+        matchBuff = pattId.matcher(userInfo);
+        if (matchBuff.find()) {
+            id = matchBuff.group()
+                    .replace(res.getString(R.string.key_uid), "")
+                    .replace(":", "");
+        } else {
+            Log.d(MyLogs, "There is no id!");
         }
 
 
@@ -57,53 +67,6 @@ public class UserObj {
                     .replace(res.getString(R.string.key_url), "")
                     .replace(":", ""));
         }
-
-        int day = DataContainer.UNKNOWN_VALUE;
-        int month = DataContainer.UNKNOWN_VALUE;
-        int year = DataContainer.UNKNOWN_VALUE;
-        Pattern pattDay = Pattern.compile(res.getString(R.string.key_bday) + res.getString(R.string.patt_day) + ":");
-        matchBuff = pattDay.matcher(userInfo);
-        if (matchBuff.find()) {
-            day = Integer.parseInt(matchBuff.group()
-                    .replace(res.getString(R.string.key_bday), "")
-                    .replace(":", ""));
-        }
-        // TODO: Ispravit' etu zalupu v budushem
-        Pattern pattMonth = Pattern.compile(res.getString(R.string.key_bmonth)
-                + res.getString(R.string.month_jan) + "||"
-                + res.getString(R.string.month_feb) + "||"
-                + res.getString(R.string.month_mar) + "||"
-                + res.getString(R.string.month_apr) + "||"
-                + res.getString(R.string.month_may) + "||"
-                + res.getString(R.string.month_jun) + "||"
-                + res.getString(R.string.month_jul) + "||"
-                + res.getString(R.string.month_aug) + "||"
-                + res.getString(R.string.month_sep) + "||"
-                + res.getString(R.string.month_oct) + "||"
-                + res.getString(R.string.month_nov) + "||"
-                + res.getString(R.string.month_dec) + ":");
-        matchBuff = pattMonth.matcher(userInfo);
-        if (matchBuff.find()) {
-            String monthStr = matchBuff.group()
-                    .replace(res.getString(R.string.key_bmonth), "")
-                    .replace(":", "");
-            String[] months = res.getStringArray(R.array.monthlist);
-            for (int i = 0; i < months.length; ++i) {
-                if (monthStr.equals(months[i])) {
-                    month = i + 1;
-                }
-            }
-        }
-
-        Pattern pattYear = Pattern.compile(res.getString(R.string.key_byear) + res.getString(R.string.patt_year) + ":");
-        matchBuff = pattYear.matcher(userInfo);
-        if (matchBuff.find()) {
-            year = Integer.parseInt(matchBuff.group()
-                    .replace(res.getString(R.string.key_byear), "")
-                    .replace(":", ""));
-        }
-
-        birth = new DataContainer(day, month, year);
 
         return true;
     }
@@ -121,9 +84,7 @@ public class UserObj {
 //        }
 //    }
 
-    public String getNick() {
-        return nick;
-    }
+    public String getNick() { return nick; }
 
     public Bitmap getPic() {
         if (pic != null) {
@@ -133,9 +94,7 @@ public class UserObj {
         }
     }
 
-    public DataContainer getBirth() {
-        return birth;
-    }
+    public String getId() { return id; }
 
     // Helping methods
     @Nullable

@@ -82,4 +82,7 @@
     <string name="menu_dialogs_counter">Dialogs:\u0020</string>
     <string name="menu_open">Open</string>
     <string name="menu_close">Close</string>
+
+    <!-- UserInfoPage | Element's names -->
+    <string name="user_page_startdialog">Send message</string>
 </resources>
